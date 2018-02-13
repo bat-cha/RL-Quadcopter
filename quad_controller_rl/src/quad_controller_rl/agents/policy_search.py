@@ -75,4 +75,4 @@ class RandomPolicySearch(BaseAgent):
         self.w = self.w + self.noise_scale * np.random.normal(size=self.w.shape)  # equal noise in all directions
         print("RandomPolicySearch.learn(): t = {:4d}, score = {:7.3f} (best = {:7.3f}), noise_scale = {}".format(
                 self.count, score, self.best_score, self.noise_scale))  # [debug]
-        #print(self.w)  # [debug: policy parameters]
+        print(self.w)  # [debug: policy parameters]
