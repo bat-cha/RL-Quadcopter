@@ -125,6 +125,8 @@ class RLControllerNode:
         
         if (self.goodsim):
             self.sim.set_state(initial_pose, initial_velocity)
+            self.episode += 1
+            rospy.loginfo("RLControllerNode[{}]: Episode {}".format(self.state, self.episode))  # [debug]
         else:
             reset_orientation = rospy.ServiceProxy('/quad_rotor/reset_orientation', SetBool)
             reset_orientation(True)  # reset orientation, velocity, force
