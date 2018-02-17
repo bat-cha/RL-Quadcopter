@@ -7,7 +7,9 @@ RUN apt-get update \
         python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /app
 VOLUME "/app"
+WORKDIR "/app"
 EXPOSE 11311
 
 COPY requirements.txt /app/requirements.txt

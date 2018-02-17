@@ -1,6 +1,7 @@
 """Policy search agent."""
 
 import numpy as np
+import h5py
 from quad_controller_rl.agents.base_agent import BaseAgent
 
 class RandomPolicySearch(BaseAgent):
@@ -22,6 +23,16 @@ class RandomPolicySearch(BaseAgent):
         # Score tracker and learning parameters
         self.best_w = None
         self.best_score = -np.inf
+        with h5py.File("/app/best_w_file.hdf5") as f:
+            if 'best_w' in f.keys():
+                self.best_w = np.array(f['best_w'])
+                print("successfully loaded from file",self.best_w)
+            if 'best_score' in f.keys():
+                self.best_score = np.array(f['best_score'])
+                print("successfully loaded from file", self.best_score )
+            f.close()
+
+
         self.noise_scale = 0.1
 
         # Episode variables
@@ -68,6 +79,13 @@ class RandomPolicySearch(BaseAgent):
             self.best_score = score
             self.best_w = self.w
             self.noise_scale = max(0.5 * self.noise_scale, 0.01)
+            # store best_w
+            with h5py.File("/app/best_w_file.hdf5",'w') as f:
+                f.create_dataset("best_w", data=self.best_w)
+                f.create_dataset("best_score", data=self.best_score)
+                f.flush()
+                print("successfully writte to file", self.best_w)
+
         else:
             self.w = self.best_w
             self.noise_scale = min(2.0 * self.noise_scale, 3.2)
@@ -75,4 +93,4 @@ class RandomPolicySearch(BaseAgent):
         self.w = self.w + self.noise_scale * np.random.normal(size=self.w.shape)  # equal noise in all directions
         print("RandomPolicySearch.learn(): t = {:4d}, score = {:7.3f} (best = {:7.3f}), noise_scale = {}".format(
                 self.count, score, self.best_score, self.noise_scale))  # [debug]
-        print(self.w)  # [debug: policy parameters]
+        #print(self.w)  # [debug: policy parameters]
