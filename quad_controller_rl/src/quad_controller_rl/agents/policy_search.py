@@ -23,17 +23,22 @@ class RandomPolicySearch(BaseAgent):
         # Score tracker and learning parameters
         self.best_w = None
         self.best_score = -np.inf
+        self.noise_scale = 0.1
         with h5py.File("/app/best_w_file.hdf5") as f:
             if 'best_w' in f.keys():
                 self.best_w = np.array(f['best_w'])
-                print("successfully loaded from file",self.best_w)
+                self.w = self.best_w
+                print("successfully loaded best_w from file",self.best_w)
             if 'best_score' in f.keys():
                 self.best_score = np.array(f['best_score'])
-                print("successfully loaded from file", self.best_score )
+                print("successfully loaded best_score from file", self.best_score)
+            if 'noise_scale' in f.keys():
+                self.noise_scale = np.array(f['noise_scale'])
+                print("successfully loaded noise_scale from file", self.noise_scale)
             f.close()
 
 
-        self.noise_scale = 0.1
+
 
         # Episode variables
         self.reset_episode_vars()
@@ -83,8 +88,9 @@ class RandomPolicySearch(BaseAgent):
             with h5py.File("/app/best_w_file.hdf5",'w') as f:
                 f.create_dataset("best_w", data=self.best_w)
                 f.create_dataset("best_score", data=self.best_score)
+                f.create_dataset("noise_scale",data=self.noise_scale)
                 f.flush()
-                print("successfully writte to file", self.best_w)
+                print("successfully writte to file", self.best_w, self.best_score, self.noise_scale)
 
         else:
             self.w = self.best_w

@@ -5,3 +5,6 @@ gym
 catkin_pkg
 rospkg
 h5py
+keras
+pandas
+tensorflow
